@@ -9,6 +9,7 @@ import { filter, map, mergeMap } from 'rxjs/operators';
 import * as fromRoot from '../reducers';
 import * as streamActions from '../stream/stream.actions';
 import * as valueActions from './value.actions';
+import * as nullActions from '../reducers/null/null.actions';
 
 interface ValueResponseType {
     value: number;
@@ -25,5 +26,26 @@ export class ValueEffectsService {
             filter((message: string) => message === '[Value] Modified'),
             mergeMap(() => this.http.get("http://localhost:50001/value")),
             map((res: HttpResponse<ValueResponseType>) => new valueActions.SetValue(res['value']))
-        )
+        );
+
+    @Effect() onIncrementValue$: Observable<Action> = this.action$
+        .ofType(valueActions.ValueActionTypes.INCREMENT_VALUE)
+        .pipe(
+            mergeMap(() => this.http.get("http://localhost:50001/increment")),
+            map((res: HttpResponse<any>) => new nullActions.Null())
+        );
+
+    @Effect() onDecrementValue$: Observable<Action> = this.action$
+        .ofType(valueActions.ValueActionTypes.DECREMENT_VALUE)
+        .pipe(
+            mergeMap(() => this.http.get("http://localhost:50001/decrement")),
+            map((res: HttpResponse<any>) => new nullActions.Null())
+        );
+
+    @Effect() onGetValue$: Observable<Action> = this.action$
+        .ofType(valueActions.ValueActionTypes.GET_VALUE)
+        .pipe(
+            mergeMap(() => this.http.get("http://localhost:50001/value")),
+            map((res: HttpResponse<ValueResponseType>) => new valueActions.SetValue(res['value']))
+        );
 }

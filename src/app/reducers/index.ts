@@ -22,6 +22,7 @@ import { storeFreeze } from 'ngrx-store-freeze';
  */
 import * as fromValue from '../value/value.reducers';
 import * as fromStream from '../stream/stream.reducers';
+import * as fromNull from './null/null.reducers';
 
 /**
  * As mentioned, we treat each reducer like a table in a database. This means
@@ -30,6 +31,7 @@ import * as fromStream from '../stream/stream.reducers';
 export interface State {
     value: fromValue.State;
     stream: fromStream.State;
+    null: fromNull.State;
 }
 
 /**
@@ -39,7 +41,8 @@ export interface State {
  */
 export const reducers: ActionReducerMap<State> = {
     value: fromValue.reducer,
-    stream: fromStream.reducer
+    stream: fromStream.reducer,
+    null: fromNull.reducer
 };
 
 // console.log all actions

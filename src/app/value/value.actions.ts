@@ -1,16 +1,20 @@
 import { Action } from '@ngrx/store';
 
 export enum ValueActionTypes {
-    DEC_VALUE = '[value] Decrement Value',
-    INC_VALUE = '[Value] Increment Value',
+    DECREMENT_VALUE = '[Value] Decrement Value',
+    INCREMENT_VALUE = '[Value] Increment Value',
+    GET_VALUE = '[Value] Get Value',
     SET_VALUE = '[Value] Set Value'
 }
 
-export class DecValue implements Action {
-    readonly type = ValueActionTypes.DEC_VALUE;
+export class DecrementValue implements Action {
+    readonly type = ValueActionTypes.DECREMENT_VALUE;
 }
-export class IncValue implements Action {
-    readonly type = ValueActionTypes.INC_VALUE;
+export class IncrementValue implements Action {
+    readonly type = ValueActionTypes.INCREMENT_VALUE;
+}
+export class GetValue implements Action {
+    readonly type = ValueActionTypes.GET_VALUE;
 }
 export class SetValue implements Action {
     readonly type = ValueActionTypes.SET_VALUE;
@@ -18,6 +22,7 @@ export class SetValue implements Action {
 }
 
 export type ValueActions 
-    = DecValue 
-    | IncValue 
+    = DecrementValue 
+    | IncrementValue
+    | GetValue 
     | SetValue;

@@ -1,15 +1,17 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 import * as fromRoot from '../reducers';
 import * as streamActions from './stream.actions';
 
 declare var EventSource;
+
 //TODO: Handle perm. close of communication to server by broswer
 @Injectable()
 export class StreamService {
-    private eventSource: EventSource;
+    private eventSource$: Subscription;
 
     private event$: Observable<string>;
     private error$: Observable<boolean>;
@@ -25,39 +27,42 @@ export class StreamService {
         this.date$ = this.store.select<number>(fromRoot.getStreamDate);
     }
 
-    open(origin: String, url: String) {
-        if(!this.eventSource) { 
-            //https://blog.octo.com/en/angular-2-sse-and-changes-detection/
-            this.eventSource = new EventSource(`${origin}${url}`);
-
-            this.eventSource.onerror = (event) => {
-                //check that the origin matches for every event
-                this.zone.run(() =>
-                    this.store.dispatch(new streamActions.Error()));
-            }
-            
-            this.eventSource.onopen = (event) => {
-                this.zone.run(() =>
-                    this.store.dispatch(new streamActions.Open()));
-            }
-             
-            this.eventSource.onmessage = (event) => {
-                if(event.origin != origin) {
-                    this.zone.run(() => 
-                        this.store.dispatch(new streamActions.Close()));
-                    return;
+    openEventSource(origin: String, url: String): Observable<any> {
+        //https://blog.octo.com/en/angular-2-sse-and-changes-detection/
+        return Observable.create(observer => {
+            let eventSource = new EventSource(`${origin}${url}`);
+            eventSource.onopen = event => this.zone.run(() => {
+                this.store.dispatch(new streamActions.Open());
+                observer.next(event);
+            });
+            eventSource.onmessage = message => this.zone.run(() => {
+                if(message.origin != origin) {
+                    this.store.dispatch(new streamActions.Close());
+                    observer.error("Invalid Origin");
+                } else {
+                    this.store.dispatch(new streamActions.Message(message.data));
+                    observer.next(message);
                 }
-                this.zone.run(() =>
-                    this.store.dispatch(new streamActions.Message(event.data)));
-            }
+            });
+            eventSource.onerror = error => this.zone.run(() => {
+                this.store.dispatch(new streamActions.Error());
+                observer.next(error);
+            });
+            return () => eventSource.close();            
+        });
+    }
+
+    open(origin: String, url: String) {
+        if(!this.eventSource$) {
+            this.eventSource$ = this.openEventSource(origin, url).subscribe();
         }
     }
 
     close() {
-        if(this.eventSource) {
+        if(this.eventSource$) {
             this.store.dispatch(new streamActions.Close());
-            this.eventSource.close();
-            this.eventSource = null;
+            this.eventSource$.unsubscribe();
+            this.eventSource$ = null;
         }
     }
 

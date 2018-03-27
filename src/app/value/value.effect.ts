@@ -31,14 +31,14 @@ export class ValueEffectsService {
     @Effect() onIncrementValue$: Observable<Action> = this.action$
         .ofType(valueActions.ValueActionTypes.INCREMENT_VALUE)
         .pipe(
-            mergeMap(() => this.http.get("http://localhost:50001/increment")),
+            mergeMap(() => this.http.get("http://localhost:50001/value/increment")),
             map((res: HttpResponse<any>) => new nullActions.Null())
         );
 
     @Effect() onDecrementValue$: Observable<Action> = this.action$
         .ofType(valueActions.ValueActionTypes.DECREMENT_VALUE)
         .pipe(
-            mergeMap(() => this.http.get("http://localhost:50001/decrement")),
+            mergeMap(() => this.http.get("http://localhost:50001/value/decrement")),
             map((res: HttpResponse<any>) => new nullActions.Null())
         );
 

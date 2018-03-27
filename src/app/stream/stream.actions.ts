@@ -17,7 +17,7 @@ export class Close implements Action {
 }
 export class Error implements Action {
     readonly type = StreamActionTypes.ERROR;
-    constructor() {}
+    constructor(public payload: ErrorEvent) {}
 }
 export class Message implements Action {
     readonly type = StreamActionTypes.MESSAGE;

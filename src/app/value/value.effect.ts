@@ -3,7 +3,6 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Action } from '@ngrx/store';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
-import { from } from 'rxjs/observable/from';
 import { filter, map, mergeMap } from 'rxjs/operators';
 
 import * as fromRoot from '../reducers';

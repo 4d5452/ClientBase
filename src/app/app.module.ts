@@ -14,6 +14,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { PageNotFoundComponent } from './404.component';
 
 import { StreamComponent } from './stream/stream.component';
+//import { StreamEffectsService } from './stream/stream.effect';
 import { StreamViewComponent } from './stream/stream-view.component';
 import { StreamService } from './stream/stream.service';
 
@@ -25,7 +26,9 @@ import { ValueService } from './value/value.service';
   imports: [
     BrowserModule,
     CommonModule,
-    EffectsModule.forRoot([ValueEffectsService]),
+    EffectsModule.forRoot([
+      ValueEffectsService
+    ]),
     HttpClientModule,
     RoutingModule,
     StoreModule.forRoot(reducers, { metaReducers })

@@ -45,7 +45,7 @@ export class StreamService {
                 }
             });
             eventSource.onerror = error => this.zone.run(() => {
-                this.store.dispatch(new streamActions.Error());
+                this.store.dispatch(new streamActions.Error(error));
                 observer.next(error);
             });
             return () => eventSource.close();            
@@ -54,7 +54,8 @@ export class StreamService {
 
     open(origin: String, url: String) {
         if(!this.eventSource$) {
-            this.eventSource$ = this.openEventSource(origin, url).subscribe();
+            this.eventSource$ = this.openEventSource(origin, url)
+                .subscribe();
         }
     }
 
